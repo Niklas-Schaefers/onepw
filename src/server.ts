@@ -1,4 +1,10 @@
-import { askForMainPassword, chooseCommand } from "./utils/questions";
+import { printPassword } from "./utils/messages";
+import {
+  askForCredential,
+  askForMainPassword,
+  chooseCommand,
+  chooseService,
+} from "./utils/questions";
 import { isMainPasswordValid } from "./utils/validation";
 
 const start = async () => {
@@ -14,9 +20,18 @@ const start = async () => {
   switch (command) {
     case "list":
       console.log("List Case");
+      {
+        const service = await chooseService(["Github", "Google", "Codewars"]);
+        printPassword(service);
+      }
       break;
     case "add":
       console.log("Add Case");
+      {
+        const newCredential = await askForCredential();
+        console.log(newCredential);
+      }
+
       break;
   }
 };
