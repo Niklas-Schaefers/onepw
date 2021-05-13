@@ -1,3 +1,4 @@
+import { readCredentials, saveCredentials } from "./utils/credentials";
 import { printPassword } from "./utils/messages";
 import {
   askForCredential,
@@ -5,7 +6,10 @@ import {
   chooseCommand,
   chooseService,
 } from "./utils/questions";
-import { isMainPasswordValid } from "./utils/validation";
+import {
+  isMainPasswordValid,
+  isServiceCredentialInDB,
+} from "./utils/validation";
 
 const start = async () => {
   let mainPassword = await askForMainPassword();
@@ -19,9 +23,17 @@ const start = async () => {
 
   switch (command) {
     case "list":
-      console.log("List Case");
       {
-        const service = await chooseService(["Github", "Google", "Codewars"]);
+        const credentials = await readCredentials();
+        const credentialServices = credentials.map(
+          (credential) => credential.service
+        );
+        const service = await chooseService(credentialServices);
+        const selectedService = credentials.find(
+          (credential) => credential.service === service
+        );
+
+        console.log(selectedService);
         printPassword(service);
       }
       break;
@@ -29,7 +41,15 @@ const start = async () => {
       console.log("Add Case");
       {
         const newCredential = await askForCredential();
-        console.log(newCredential);
+
+        const existsInDb = await isServiceCredentialInDB(newCredential);
+        if (existsInDb) {
+          console.log("Credential already exists.");
+        }
+        await saveCredentials(newCredential);
+        console.log(
+          `Service: ${newCredential.service} with Username: ${newCredential.username} is saved in database`
+        );
       }
 
       break;

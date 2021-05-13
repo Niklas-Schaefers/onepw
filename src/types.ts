@@ -1,5 +1,5 @@
 export type Command = "list" | "add";
-export type Credential = {
+export type CredentialType = {
   service: string;
   username: string;
   password: string;
