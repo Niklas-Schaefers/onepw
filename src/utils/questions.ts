@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import { Command } from "../types";
+import { Command, CredentialType } from "../types";
 
 export const askForMainPassword = async (): Promise<string> => {
   const answers = await inquirer.prompt<{ mainPassword: string }>([
@@ -35,8 +35,8 @@ export const chooseService = async (services: string[]): Promise<string> => {
   return answers.service;
 };
 
-export const askForCredential = async (): Promise<Credential> => {
-  const answers = await inquirer.prompt<Credential>([
+export const askForCredential = async (): Promise<CredentialType> => {
+  const answers = await inquirer.prompt<CredentialType>([
     {
       type: "input",
       name: "service",
