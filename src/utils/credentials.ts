@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import type { CredentialType } from "../types";
 import CryptoJS from "crypto-js";
+import { getCollection } from "./database";
 
 type DB = {
   credentials: CredentialType[];
@@ -19,13 +20,7 @@ export const saveCredentials = async (
     newCredential.password,
     "password"
   ).toString();
-  const allCredentials = await readCredentials();
-  allCredentials.push(newCredential);
-  await fs.writeFile(
-    "./db.json",
-    JSON.stringify({ credentials: allCredentials }, null, 2),
-    "utf-8"
-  );
+  await getCollection("credentials").insertOne(newCredential);
 };
 
 export const deleteCredentials = async (
