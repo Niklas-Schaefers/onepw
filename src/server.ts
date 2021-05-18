@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import {
   deleteCredentials,
   readCredentials,
@@ -16,7 +17,16 @@ import {
 } from "./utils/validation";
 import CryptoJS from "crypto-js";
 
+dotenv.config();
+
+console.log(process.env.MONGO_URL);
+
+// const databaseURI =
+//   "mongodb+srv://NiklasDB:kP7thl5gQ5I1ddJ8@cluster0.af4sw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+
 const start = async () => {
+  // await connectDatabase();
+
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
     console.log("Is invalid");
