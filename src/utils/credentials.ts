@@ -17,9 +17,9 @@ export const saveCredentials = async (
 };
 
 export const deleteCredential = async (
-  selectedCredential: CredentialType
+  selectedCredential: string
 ): Promise<void> => {
   await getCredentialsCollection().deleteOne({
-    service: selectedCredential.service,
+    service: selectedCredential,
   });
 };

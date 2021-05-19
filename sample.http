@@ -12,10 +12,10 @@ Content-Type: application/json
 
 
 {
-    "service": "MyService",
-    "username": "BobBoson",
+    "service": "YouService",
+    "username": "Henry",
     "password": "supersecret9000"
 }
 
 ### Delete a credential
-DELETE /api/credentials/MyService HTTP/1.1
+DELETE http://localhost:5000/api/credentials/GitHub HTTP/1.1
