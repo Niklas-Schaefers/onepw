@@ -1,5 +1,6 @@
+import dotenv from "dotenv";
 import {
-  deleteCredentials,
+  deleteCredential,
   readCredentials,
   saveCredentials,
 } from "./utils/credentials";
@@ -15,8 +16,16 @@ import {
   isServiceCredentialInDB,
 } from "./utils/validation";
 import CryptoJS from "crypto-js";
+import { connectDatabase, disconnectDatabase } from "./utils/database";
+
+dotenv.config();
 
 const start = async () => {
+  if (process.env.MONGO_URL === undefined) {
+    throw new Error("Missing env MONGO_URL");
+  }
+  await connectDatabase(process.env.MONGO_URL);
+
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
     console.log("Is invalid");
@@ -29,40 +38,33 @@ const start = async () => {
   switch (command) {
     case "list":
       {
-        const action = await chooseAction();
         const credentials = await readCredentials();
+        const credentialServices = credentials.map(
+          (credential) => credential.service
+        );
+        const service = await chooseService(credentialServices);
+        const selectedCredential = credentials.find(
+          (credential) => credential.service === service
+        );
+
+        const action = await chooseAction();
         switch (action) {
           case "show":
             {
-              const credentialServices = credentials.map(
-                (credential) => credential.service
-              );
-              const service = await chooseService(credentialServices);
-              const selectedService = credentials.find(
-                (credential) => credential.service === service
-              );
-
-              if (selectedService) {
-                selectedService.password = CryptoJS.AES.decrypt(
-                  selectedService.password,
+              if (selectedCredential) {
+                selectedCredential.password = CryptoJS.AES.decrypt(
+                  selectedCredential.password,
                   "password"
                 ).toString(CryptoJS.enc.Utf8);
                 console.log(
-                  `The password for ${selectedService.service} with username: ${selectedService.username} is ${selectedService.password}}`
+                  `The password for ${selectedCredential.service} with username: ${selectedCredential.username} is ${selectedCredential.password}}`
                 );
               }
             }
             break;
           case "delete": {
-            const credentialServices = credentials.map(
-              (credential) => credential.service
-            );
-            const service = await chooseService(credentialServices);
-            const selectedService = credentials.find(
-              (credential) => credential.service === service
-            );
-            if (selectedService) {
-              deleteCredentials(selectedService);
+            if (selectedCredential) {
+              await deleteCredential(selectedCredential);
               console.log(`${service} is removed from list.`);
             }
           }
@@ -86,6 +88,7 @@ const start = async () => {
 
       break;
   }
+  await disconnectDatabase();
 };
 
 start();
