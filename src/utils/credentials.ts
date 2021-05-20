@@ -16,10 +16,22 @@ export const saveCredentials = async (
   await getCredentialsCollection().insertOne(newCredential);
 };
 
-export const deleteCredential = async (
-  selectedCredential: CredentialType
-): Promise<void> => {
+export const deleteCredential = async (service: string): Promise<void> => {
   await getCredentialsCollection().deleteOne({
-    service: selectedCredential.service,
+    service,
   });
 };
+
+export const readCredential = async (
+  service: string
+): Promise<CredentialType> => {
+  const credential = await getCredentialsCollection().findOne({ service });
+  if (!credential) {
+    throw new Error("Not found");
+  }
+  return credential;
+};
+
+// export const findOneCredentialInDatabase = async (service: string): Promise <CredentialType> =>{
+//   await findOne({service: service})
+// }
