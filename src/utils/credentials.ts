@@ -21,3 +21,17 @@ export const deleteCredential = async (service: string): Promise<void> => {
     service,
   });
 };
+
+export const readCredential = async (
+  service: string
+): Promise<CredentialType> => {
+  const credential = await getCredentialsCollection().findOne({ service });
+  if (!credential) {
+    throw new Error("Not found");
+  }
+  return credential;
+};
+
+// export const findOneCredentialInDatabase = async (service: string): Promise <CredentialType> =>{
+//   await findOne({service: service})
+// }

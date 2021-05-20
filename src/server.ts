@@ -4,10 +4,12 @@ dotenv.config();
 import express from "express";
 import {
   deleteCredential,
+  readCredential,
   readCredentials,
   saveCredentials,
 } from "./utils/credentials";
 import { connectDatabase } from "./utils/database";
+import CryptoJS from "crypto-js";
 
 if (process.env.MONGO_URL === undefined) {
   throw new Error("Missing env MONGO_URL");
@@ -21,6 +23,18 @@ app.use(express.json());
 app.get("/api/credentials", async (_request, response) => {
   const credentials = await readCredentials();
   response.json(credentials);
+});
+
+app.get("/api/credentials/:service", async (request, response) => {
+  const credential = await readCredential(request.params.service);
+
+  if (credential) {
+    credential.password = CryptoJS.AES.decrypt(
+      credential.password,
+      "password"
+    ).toString(CryptoJS.enc.Utf8);
+  }
+  response.json(credential);
 });
 
 app.post("/api/credentials", async (request, response) => {
