@@ -1,14 +1,18 @@
 import React from "react";
 import styles from "./Credentials.module.css";
+import { CredentialType } from "../../types";
 
 type CredientialProps = {
-  service: string;
+  credential: CredentialType;
 };
 
-function Credential({ service }: CredientialProps): JSX.Element {
+function Credential({ credential }: CredientialProps): JSX.Element {
   return (
     <li className={styles.credential}>
-      {service} <button>🔍</button> <button>❌</button>
+      <span>{credential.service}</span>
+      <span>{credential.username}</span>
+      <span>{credential.password}</span>
+      <button>🔍</button> <button>❌</button>
       <button>🔧</button>
     </li>
   );

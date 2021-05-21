@@ -2,9 +2,21 @@
   text-align: center;
   padding-top: 2em;
   margin: 0;
+  width: 100vw;
 }
 
-ul {
+.bla {
   display: grid;
   grid-gap: 1em;
+}
+
+.blablub {
+  text-align: center;
+}
+
+.blub {
+  background-color: black;
+  color: white;
+  padding: 0.5em;
+  border-radius: 0.3em;
 }
