@@ -1,42 +1,41 @@
-import React, { useState } from "react";
-import logo from "./logo.svg";
+import React, { useEffect, useState } from "react";
 import styles from "./App.module.css";
+import AppHeader from "./components/AppHeader";
+import Credential from "./components/Credential";
+import { CredentialType } from "../types";
 
 function App(): JSX.Element {
-  const [count, setCount] = useState<number>(0);
+  const [credentials, setCredentials] = useState<CredentialType[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/credentials")
+      .then((response) => response.json())
+      .then((credentials) => setCredentials(credentials));
+  }, []);
+
+  const credentialElements = credentials.map((credential) => (
+    <Credential key={credential.service} credential={credential} />
+  ));
+
   return (
     <div className={styles.App}>
-      <header className={styles["App-header"]}>
-        <img src={logo} className={styles["App-logo"]} alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className={styles["App-link"]}
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {" | "}
-          <a
-            className={styles["App-link"]}
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+      <AppHeader
+        title="One PW"
+        imageSrc="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fsvgsilh.com%2Fpng-1024%2F575680.png&f=1&nofb=1"
+      />
+      <main>
+        <ul className={styles.bla}>
+          <li className={styles.blub}>
+            <span>SERVICE</span>
+            <span>USERNAME</span>
+            <span>PASSWORD</span>
+            <span className={styles.blablub}>SHOW</span>
+            <span className={styles.blablub}>DELETE</span>
+            <span className={styles.blablub}>EDIT</span>
+          </li>
+          {credentialElements}
+        </ul>
+      </main>
     </div>
   );
 }
